@@ -1,0 +1,3 @@
+SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = 'test') AND (TABLE_NAME = 'files');
+
+select id, SHA2(file, 256) as checksum from files

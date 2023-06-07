@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1">
+    <title>Hello World</title>
+    <script>
+
+      // https://techoverflow.net/2021/11/26/how-to-compute-sha-hash-of-local-file-in-javascript-using-subtlecrypto-api/
+      function onFileChange(evt) {
+        if (evt.files.length > 0) {
+
+          const file = evt.files[0];
+
+          var filename = file.name;
+
+          var reader = new FileReader();
+          reader.onload = function(ev) {
+            console.log("File", filename, ":");
+            crypto.subtle.digest('SHA-256', ev.target.result).then(hashBuffer => {
+              const hashArray = Array.from(new Uint8Array(hashBuffer));
+              const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+              console.log(hashHex);
+              findDuplicateFile(hashHex);
+            })
+            .catch(ex => console.error(ex));
+          };
+
+          reader.onerror = function(err) {
+            console.error("Failed to read file", err);
+          }
+          reader.readAsArrayBuffer(file);
+
+          evt.value = "";
+        }
+      }
+
+      function findDuplicateFile(hashHex) {
+        const formData  = new FormData();
+        formData.append('operation', 'findDuplicateFile');
+        const data = { hashHex };
+        formData.append('data', JSON.stringify(data));
+
+        fetch("/server.php", {
+          method: "POST",
+          body: formData
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((res) => {
+          console.log(res);
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <input type="file" onchange="onFileChange(this)" />
+  </body>
+</html>
