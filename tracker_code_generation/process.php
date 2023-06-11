@@ -14,7 +14,9 @@
     $mysqli->begin_transaction();
     try {
       $column = 'track_code';
-      $result = $mysqli->query(sprintf("SELECT * from journal WHERE name = '%s' LIMIT 1 FOR UPDATE", $mysqli->real_escape_string($column)));
+      $result = $mysqli->query(sprintf("SELECT value from journal WHERE name = '%s' LIMIT 1 FOR UPDATE", $mysqli->real_escape_string($column)));
+      if ($result->num_rows <= 0)
+        throw new Exception("Column `$column` not exist in table `journal`");
       $last_track_code = (int) $result->fetch_assoc()['value'];
       echo "@$uid: last_track_code is $last_track_code" . PHP_EOL;
       $track_code = $last_track_code;
