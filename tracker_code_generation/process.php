@@ -14,7 +14,7 @@
     $mysqli->begin_transaction();
     try {
       $column = 'track_code';
-      $result = $mysqli->query(sprintf("SELECT * from last_code_keeper WHERE name = '%s' LIMIT 1 FOR UPDATE", $mysqli->real_escape_string($column)));
+      $result = $mysqli->query(sprintf("SELECT * from journal WHERE name = '%s' LIMIT 1 FOR UPDATE", $mysqli->real_escape_string($column)));
       $last_track_code = (int) $result->fetch_assoc()['value'];
       echo "@$uid: last_track_code is $last_track_code" . PHP_EOL;
       $track_code = $last_track_code;
@@ -27,7 +27,7 @@
         $stmt->execute();
         $track_codes[] = $track_code_string;
       }
-      $stmt = $mysqli->prepare("UPDATE last_code_keeper SET value = ? WHERE name = ?");
+      $stmt = $mysqli->prepare("UPDATE journal SET value = ? WHERE name = ?");
       $stmt->bind_param('is', $track_code, $column);
       $stmt->execute();
       $mysqli->commit();
