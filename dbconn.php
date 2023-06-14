@@ -67,3 +67,12 @@
       $mysqli->rollback();
       var_dump($exception->getMessage());
   }
+
+  function abc(...$abc) {
+    var_dump($abc);
+  }
+
+  $params = [1, 2, 3];
+
+  abc(...$params);
+  abc(1, 2, 3);
